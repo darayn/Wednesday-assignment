@@ -6,12 +6,12 @@ const app = express();
 
 app.use(express.json())
 const PORT = 4000
-
+ 
 
 
 
 app.get("/",(req, res) =>{
-
+ 
     res.status(200).json({
         message: "Hello World"
     })
@@ -24,19 +24,23 @@ app.get("/",(req, res) =>{
 
 app.post("/chunk", (req, res)=>{
 
-    const reqLen = 50
-    const msg = req.body.tweet
-    const size = Math.ceil(msg.length/reqLen)
-    const r = Array(size)
-    let offset = 0
     
-    for (let i = 0; i < size; i++) {
-      r[i] = `${i+1}/${size} ` + msg.substr(offset, reqLen)
-      offset += reqLen
+
+    const msg = req.body.tweet
+    
+    regex =  /\S.{0,45}\S(?= |$)/g
+    let chunks = msg.match(regex);
+    
+    const totalChunks = chunks.length
+
+
+    // console.log(totalChunks);
+
+    for (let index = 1; index <= chunks.length; index++) {
+        chunks[index - 1] = `${index}/${totalChunks} ` + chunks[index - 1]
+        
     }
-
-
-    res.status(200).send(JSON.stringify(r));
+    res.status(200).send(JSON.stringify(chunks));
   
 
 
